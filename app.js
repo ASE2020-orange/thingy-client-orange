@@ -81,12 +81,13 @@ async function asnwerQuestion(answer_id) {
 }
 
 async function connectWS() {
-    console.log("Starting connection to WebSocket Server")
-    let server = new WebSocket(`ws://${SERVER_ADRESS}/ws`)
+    console.log("Starting connection to WebSocket Server");
+    let server = new WebSocket(`ws://${SERVER_ADRESS}/ws`);
 
     server.onopen = (event) => {
-        console.log(event)
-        console.log("Successfully connected to the websocket server...")
+        console.log(event);
+        server.send("CLIENT_CONNECT");
+        console.log("Successfully connected to the websocket server...");
     }
 
     server.onmessage = (event) => {
