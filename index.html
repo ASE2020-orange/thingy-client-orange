@@ -10,6 +10,7 @@
 
 <body>
     <div id="app">
+        <button v-on:click="new_game">Create game</button>
         <category v-bind:category="category"></category>
         <question v-bind:question="question"></question>
         <answer v-bind:key="answer.id" v-bind:answer="answer" v-for="answer in answers"></answer>
