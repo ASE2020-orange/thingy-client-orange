@@ -1,4 +1,10 @@
 const SERVER_ADRESS = "127.0.0.1:8080";
+var notyf = new Notyf({
+    position: ({
+        x: 'center',
+        y: 'top'
+    })
+});
 
 Vue.component('category', {
     props: ['category'],
@@ -15,9 +21,15 @@ Vue.component('question', {
 })
 
 Vue.component('answer', {
-    props: ['answer'],
+    props: ['answer', 'position'],
     template: `
-      <h3>{{answer.answer}}</h3>
+    <b-list-group-item>
+        <img
+        title="icon by Aman from the Noun Project"
+        height="50px" width="50px"
+        v-bind:src="answer.position">
+        {{answer.answer}}
+    </b-list-group-item>
     `
 })
 
@@ -28,16 +40,23 @@ var vm = new Vue({
     },
     data: {
         question: undefined,
-        answers: undefined,
+        answers: [{
+            answer: undefined,
+            svg_style: undefined,
+            position: undefined
+        }],
         category: undefined,
-        game_id: -1
+        game_id: -1,
+        selected_answer: -1,
+        game_started: false
     },
     methods: {
-        new_game: create_game
+        new_game: new_game,
+        isAnswerSelectedClass: isAnswerSelectedClass
     }
 })
 
-function create_game() {
+function new_game() {
     fetch(`http://${SERVER_ADRESS}/api/games/`, {
             method: 'get'
         }).then(res => {
@@ -45,10 +64,11 @@ function create_game() {
         }).catch(err => console.log(err))
         .then(data => {
             vm.game_id = data.game_id;
+            vm.game_started = true;
             getQuestion();
         }).catch(err => console.log(err))
 }
-
+let positions = ["./img/normal.svg", "./img/side.svg", "./img/upside_down.svg"];
 async function getQuestion() {
     fetch(`http://${SERVER_ADRESS}/api/games/${vm.game_id}/question/`, {
             method: 'get'
@@ -57,27 +77,45 @@ async function getQuestion() {
         }).catch(err => console.log(err))
         .then(data => {
             vm.answers = data.answers;
-            vm.question = data.question;
+            vm.answers.forEach(x => {
+                x.position = positions[vm.answers.indexOf(x)];
+                x.answer = decodeHTML(x.answer);
+            });
+            vm.question = decodeHTML(data.question);
             vm.category = data.category;
-            document.body.style.backgroundColor = "white";
         }).catch(err => console.log(err))
+}
+
+function showToaster(variant, title, answer_id) {
+    vm.$bvToast.toast(`${vm.answers[answer_id].answer}`, {
+        title: title,
+        variant: variant,
+        toaster: 'b-toaster-top-center',
+        noCloseButton: true
+    })
 }
 
 async function asnwerQuestion(answer_id) {
     fetch(`http://${SERVER_ADRESS}/api/games/${vm.game_id}/question/`, {
             method: 'post',
-            body: JSON.stringify({'answer_id': answer_id})
+            body: JSON.stringify({
+                'answer_id': answer_id
+            })
         }).then(res => {
             return res.json();
         }).catch(err => console.log(err))
         .then(data => {
-            if (data.correct){
-                document.body.style.backgroundColor = "green";
+            if (data.correct) {
+                showToaster('success', 'Correct answer', answer_id);
                 getQuestion();
-            }else{
-                document.body.style.backgroundColor = "red";
+            } else {
+                showToaster('danger', 'Wrong answer', answer_id);
             }
         }).catch(err => console.log(err))
+}
+
+function selectAnswer(answer_id) {
+    vm.selected_answer = answer_id;
 }
 
 async function connectWS() {
@@ -97,15 +135,20 @@ async function connectWS() {
 
             console.log(`${action} from ${thingy}`);
 
-            switch(action){
+            switch (action) {
                 case 'FLIP_A':
-                    asnwerQuestion(0);
+                    selectAnswer(0);
                     break;
                 case 'FLIP_B':
-                    asnwerQuestion(1);
+                    selectAnswer(1);
                     break;
                 case 'FLIP_C':
-                    asnwerQuestion(2);
+                    selectAnswer(2);
+                    break;
+                case 'BUTTON':
+                    if (vm.selected_answer != -1) {
+                        asnwerQuestion(vm.selected_answer);
+                    }
                     break;
             }
 
@@ -114,3 +157,21 @@ async function connectWS() {
 
     return server;
 }
+
+function isAnswerSelectedStyle(index){
+
+}
+
+function isAnswerSelectedClass(index) {
+    if (index == vm.selected_answer) {
+        return "bg-info text-light selected_answer";
+    } else {
+        return "bg-light text-black";
+    }
+}
+
+function decodeHTML(html) {
+    var txt = document.createElement('textarea');
+    txt.innerHTML = html;
+    return txt.value;
+};
