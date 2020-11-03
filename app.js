@@ -158,10 +158,6 @@ async function connectWS() {
     return server;
 }
 
-function isAnswerSelectedStyle(index){
-
-}
-
 function isAnswerSelectedClass(index) {
     if (index == vm.selected_answer) {
         return "bg-info text-light selected_answer";
