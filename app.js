@@ -1,4 +1,4 @@
-const SERVER_ADRESS = "127.0.0.1:8080";
+const SERVER_ADRESS = "127.0.0.1:1080";
 var notyf = new Notyf({
     position: ({
         x: 'center',
