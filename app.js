@@ -21,11 +21,11 @@ Vue.component('question', {
 })
 
 Vue.component('answer', {
-    props: ['answer', 'position'],
+    props: ['answer', 'position', 'title'],
     template: `
     <b-list-group-item>
         <img
-        title="icon by Aman from the Noun Project"
+        v-bind:title="answer.title"
         height="50px" width="50px"
         v-bind:src="answer.position">
         {{answer.answer}}
@@ -48,7 +48,7 @@ var vm = new Vue({
         question: undefined,
         answers: [{
             answer: undefined,
-            svg_style: undefined,
+            title: undefined,
             position: undefined
         }],
         category: undefined,
@@ -75,6 +75,7 @@ function new_game() {
         }).catch(err => console.log(err))
 }
 let positions = ["./img/normal.svg", "./img/side.svg", "./img/upside_down.svg"];
+let position_titles = ["Normal", "On the side", "Upside down"];
 async function getQuestion() {
     fetch(`http://${SERVER_ADRESS}/api/games/${vm.game_id}/question/`, {
             method: 'get'
@@ -85,6 +86,7 @@ async function getQuestion() {
             vm.answers = data.answers;
             vm.answers.forEach(x => {
                 x.position = positions[vm.answers.indexOf(x)];
+                x.title = position_titles[vm.answers.indexOf(x)];
                 x.answer = decodeHTML(x.answer);
             });
             vm.question = decodeHTML(data.question);
