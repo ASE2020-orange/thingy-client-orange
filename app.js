@@ -36,7 +36,13 @@ Vue.component('answer', {
 var vm = new Vue({
     el: '#app',
     mounted() {
-        this.server = connectWS();
+        connectWS().then((ws_server) => {
+            vm.ws_server = ws_server;
+        });
+        window.addEventListener('unload', (event) => {
+            vm.ws_server.send("close");
+            vm.ws_server.close();
+        });
     },
     data: {
         question: undefined,
