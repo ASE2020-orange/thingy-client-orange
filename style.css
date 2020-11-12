@@ -1,9 +1,0 @@
-.selected_answer img {
-    filter: invert(1);
-}
-
-.fluid-container.footer {
-    position: absolute;
-    bottom: 0px;
-    right: 10px;
-}
