@@ -1,4 +1,8 @@
-# thingy-quizz
+# container installation
+- `docker build -t thingy-client-orange .`
+- then `docker-compose up` in the thingy-api-orange root folder
+
+# local installation
 
 ## Project setup
 ```
