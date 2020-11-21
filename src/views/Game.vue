@@ -49,7 +49,7 @@ export default {
     },
     methods: {
       start_game() {
-        fetch(`http://${this.server_adress}/api/games/`, {
+        fetch(`http://${this.server_adress}/games/`, {
           method: "get",
         })
           .then((res) => {
@@ -75,7 +75,7 @@ export default {
       },
       getQuestion() {
         fetch(
-          `http://${this.server_adress}/api/games/${this.game_id}/question/`,
+          `http://${this.server_adress}/games/${this.game_id}/question/`,
           {
             method: "get",
           }
@@ -146,7 +146,7 @@ export default {
       },
       answerQuestion(answer_id) {
         fetch(
-          `http://${this.server_adress}/api/games/${this.game_id}/question/`,
+          `http://${this.server_adress}/games/${this.game_id}/question/`,
           {
             method: "post",
             body: JSON.stringify({
