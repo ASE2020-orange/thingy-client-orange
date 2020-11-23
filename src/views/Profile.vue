@@ -2,8 +2,10 @@
 <main>
 	<section class="container text-center pt-4">
 		<div v-if="profile">
-			<h1>Name : {{profile.name}}</h1>
+			<h1>{{profile.name}}</h1>
 			<img v-bind:src="profile.avatar_url" />
+			<h3>Location : {{profile.location}}</h3>
+			<h3>Bio : {{profile.bio}}</h3>
 		</div>
 		<div v-else>You are not connected</div>
 	</section>
@@ -14,7 +16,6 @@
 export default {
 	data: () => {
 		return {
-			server_adress: "127.0.0.1:1080",
 			profile: false
 		};
 	},
