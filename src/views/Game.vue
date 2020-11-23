@@ -31,7 +31,6 @@ export default {
   },
     data: () => {
       return {
-        server_adress: "127.0.0.1:1080",
         ws_server: undefined,
         positions: [
           require("@/assets/normal.svg"),
