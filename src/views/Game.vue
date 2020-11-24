@@ -1,5 +1,36 @@
 <template>
 <div class="Game">
+  <b-container fluid id="settingsContainer" v-if="showSettings">
+    <b-row class="vh-30 text-center" align-v="center">
+      <b-col sm="3">
+          <label for="categorySelection">Quizz questions categories </label>
+      </b-col>
+      <b-col sm="6">
+        <select v-model ="selectedCategory" class="form-control form-control-sm" name="categorySelection" id="quizzCategoriesSelection">
+          <option v-for="category in categories" v-bind:value="{id: category.id, name: category.name}" :key="category.id">
+            {{category.name}}
+          </option>
+        </select>
+      </b-col>
+    </b-row>
+    <b-row class="vh-30 text-center" align-v="center">
+      <b-col sm="3">
+          <label for="difficultySelection">Questions difficulty</label>
+      </b-col>
+      <b-col sm="6">
+        <select class="form-control form-control-sm" v-model="selectedDifficulty" name="difficultySelection" id="quizzDifficultySelection">
+          <option v-for="difficulty in difficulties" v-bind:value="{difficulty: difficulty}" :key="difficulty">
+            {{difficulty}}
+          </option>
+        </select>
+      </b-col>
+    </b-row>
+    <b-row class="vw-100 text-center" align-v="center">
+      <button type="button" class="btn btn-primary" v-on:click="startGame()">Start game</button>
+    </b-row>
+  </b-container>
+  
+  
   <b-container fluid>
   <b-row class="vh-100 text-center" align-v="center">
     <b-col>
@@ -27,18 +58,33 @@ export default {
     Answer,
   },
   created() {
-    this.start_game();
+    this.getCategories();
+    //this.startGame();
   },
     data: () => {
       return {
-        server_adress: "127.0.0.1:1080",
+        server_adress: "localhost:1080/api",
         ws_server: undefined,
+        showSettings: true,
+
+        categories : [],
+        selectedCategory: {},
+
+        difficulties : [
+          'easy',
+          'medium',
+          'hard',
+        ],
+        selectedDifficulty: {difficulty:'easy'},
+
+
         positions: [
           require("@/assets/normal.svg"),
           require("@/assets/side.svg"),
           require("@/assets/upside_down.svg"),
         ],
         position_titles: ["Normal", "On the side", "Upside down"],
+
         question: undefined,
         answers: new Array(),
         category: undefined,
@@ -48,10 +94,16 @@ export default {
       };
     },
     methods: {
-      start_game() {
-        fetch(`http://${this.server_adress}/games/`, {
-          method: "get",
-        })
+      startGame() {
+        this.showSettings = false;
+
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ category: this.selectedCategory.id, difficulty: this.selectedDifficulty.difficulty }),
+        };
+
+        fetch(`http://${this.server_adress}/games/`, requestOptions)
           .then((res) => {
             return res.json();
           })
@@ -73,6 +125,23 @@ export default {
           return "bg-light text-black";
         }
       },
+
+      getCategories()
+      {
+          fetch(`http://${this.server_adress}/categories/`, {
+              method: "get",
+          })
+          .then((res) => {
+            return res.json();
+          })
+          .catch((err) => console.log(err))
+          .then((data) => {
+            this.categories = data.trivia_categories;
+            this.selectedCategory = this.categories[0];
+          })
+          .catch((err) => console.log(err));
+      },
+
       getQuestion() {
         fetch(
           `http://${this.server_adress}/games/${this.game_id}/question/`,
