@@ -1,11 +1,12 @@
 <template>
 <div class="Game">
-  <b-container fluid id="settingsContainer" v-if="showSettings">
-    <b-row class="vh-30 text-center" align-v="center">
-      <b-col sm="3">
+  <h2 class="mt-2" v-if="showSettings">Select the game settings</h2>
+  <b-container class="offset-sm-3" fluid id="settingsContainer" v-if="showSettings">
+    <b-row class="vh-30 text-center mt-4" align-v="center">
+      <b-col class="text-left" sm="3">
           <label for="categorySelection">Quizz questions categories </label>
       </b-col>
-      <b-col sm="6">
+      <b-col sm="3">
         <select v-model ="selectedCategory" class="form-control form-control-sm" name="categorySelection" id="quizzCategoriesSelection">
           <option v-for="category in categories" v-bind:value="{id: category.id, name: category.name}" :key="category.id">
             {{category.name}}
@@ -13,11 +14,11 @@
         </select>
       </b-col>
     </b-row>
-    <b-row class="vh-30 text-center" align-v="center">
+    <b-row class="vh-30 text-left mt-2" align-v="center">
       <b-col sm="3">
           <label for="difficultySelection">Questions difficulty</label>
       </b-col>
-      <b-col sm="6">
+      <b-col sm="3">
         <select class="form-control form-control-sm" v-model="selectedDifficulty" name="difficultySelection" id="quizzDifficultySelection">
           <option v-for="difficulty in difficulties" v-bind:value="{difficulty: difficulty}" :key="difficulty">
             {{difficulty}}
@@ -25,8 +26,10 @@
         </select>
       </b-col>
     </b-row>
-    <b-row class="vw-100 text-center" align-v="center">
-      <button type="button" class="btn btn-primary" v-on:click="startGame()">Start game</button>
+    <b-row class="vw-100 text-left mt-2">
+      <b-col sm="6">
+        <button type="button" class="btn btn-primary" v-on:click="startGame()">Start game</button>
+      </b-col>
     </b-row>
   </b-container>
   
@@ -71,11 +74,11 @@ export default {
         selectedCategory: {},
 
         difficulties : [
-          'easy',
-          'medium',
-          'hard',
+          'Easy',
+          'Medium',
+          'Hard',
         ],
-        selectedDifficulty: {difficulty:'easy'},
+        selectedDifficulty: {difficulty:'Easy'},
 
 
         positions: [
@@ -100,7 +103,7 @@ export default {
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ category: this.selectedCategory.id, difficulty: this.selectedDifficulty.difficulty }),
+          body: JSON.stringify({ category: this.selectedCategory.id, difficulty: this.selectedDifficulty.difficulty.toLowerCase() }),
         };
 
         fetch(`http://${this.server_adress}/games/`, requestOptions)
