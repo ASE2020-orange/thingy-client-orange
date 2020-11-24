@@ -63,7 +63,7 @@ export default {
   },
     data: () => {
       return {
-        server_adress: "localhost:1080/api",
+        server_adress: "localhost:1080",
         ws_server: undefined,
         showSettings: true,
 
@@ -103,7 +103,7 @@ export default {
           body: JSON.stringify({ category: this.selectedCategory.id, difficulty: this.selectedDifficulty.difficulty }),
         };
 
-        fetch(`http://${this.server_adress}/games/`, requestOptions)
+        fetch(`http://${this.server_adress}/api/games/`, requestOptions)
           .then((res) => {
             return res.json();
           })
@@ -128,7 +128,7 @@ export default {
 
       getCategories()
       {
-          fetch(`http://${this.server_adress}/categories/`, {
+          fetch(`http://${this.server_adress}/api/categories/`, {
               method: "get",
           })
           .then((res) => {
@@ -144,7 +144,7 @@ export default {
 
       getQuestion() {
         fetch(
-          `http://${this.server_adress}/games/${this.game_id}/question/`,
+          `http://${this.server_adress}/api/games/${this.game_id}/question/`,
           {
             method: "get",
           }
@@ -215,7 +215,7 @@ export default {
       },
       answerQuestion(answer_id) {
         fetch(
-          `http://${this.server_adress}/games/${this.game_id}/question/`,
+          `http://${this.server_adress}/api/games/${this.game_id}/question/`,
           {
             method: "post",
             body: JSON.stringify({
