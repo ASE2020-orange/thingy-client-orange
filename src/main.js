@@ -14,6 +14,12 @@ Vue.mixin({
     return {
       get server_adress() {
         return "127.0.0.1:1080";
+      },
+      get http_prefix(){
+        return "http://";
+      },
+      get ws_prefix(){
+        return "ws://";
       }
     }
   }

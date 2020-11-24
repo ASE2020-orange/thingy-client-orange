@@ -111,7 +111,6 @@ export default {
   },
   data: () => {
     return {
-      server_adress: "localhost:1080",
       ws_server: undefined,
       showSettings: true,
 
@@ -151,7 +150,7 @@ export default {
         }),
       };
 
-      fetch(`http://${this.server_adress}/api/games/`, requestOptions)
+      fetch(`${this.http_prefix}${this.server_adress}/api/games/`, requestOptions)
         .then((res) => {
           return res.json();
         })
@@ -175,7 +174,7 @@ export default {
     },
 
     getCategories() {
-      fetch(`http://${this.server_adress}/api/categories/`, {
+      fetch(`${this.http_prefix}${this.server_adress}/api/categories/`, {
         method: "get",
       })
         .then((res) => {
@@ -189,10 +188,9 @@ export default {
         .catch((err) => console.log(err));
     },
     checkExistingGame() {
-      fetch(`http://${this.server_adress}/api/games/`, {
+      fetch(`${this.http_prefix}${this.server_adress}/api/games/`, {
         method: "get",
-      })
-        .then((res) => {
+      }).then((res) => {
           return res.json();
         })
         .catch((err) => console.log(err))
@@ -208,6 +206,7 @@ export default {
         .catch((err) => console.log(err));
     },
     getQuestion() {
+
       this.$bvToast.toast("Getting next question", {
         title: "Next question",
         variant: "info",
@@ -215,7 +214,7 @@ export default {
         noCloseButton: true,
       });
       fetch(
-        `http://${this.server_adress}/api/games/${this.game_id}/question/`,
+        `${this.http_prefix}${this.server_adress}/api/games/${this.game_id}/question/`,
         {
           method: "get",
         }
@@ -246,7 +245,7 @@ export default {
     },
     connectWS() {
       console.log("Starting connection to WebSocket Server");
-      this.ws_server = new WebSocket(`ws://${this.server_adress}/ws`);
+      this.ws_server = new WebSocket(`${this.ws_prefix}${this.server_adress}/ws`);
 
       this.ws_server.onopen = () => {
         this.ws_server.send("CLIENT_CONNECT");
@@ -297,6 +296,16 @@ export default {
             case "GAME_STARTED":
               if (this.thingy_id != -1) {
                 this.checkExistingGame();
+              } else {
+                this.$bvToast.toast(
+                  "A game has been started, hurry up to choose your Thingy!",
+                  {
+                    title: "Game started",
+                    variant: "info",
+                    toaster: "b-toaster-top-center",
+                    noCloseButton: true,
+                  }
+                );
               }
               break;
           }
@@ -330,7 +339,7 @@ export default {
     },
     answerQuestion(answer_id) {
       fetch(
-        `http://${this.server_adress}/api/games/${this.game_id}/question/`,
+        `${this.http_prefix}${this.server_adress}/api/games/${this.game_id}/question/`,
         {
           method: "post",
           body: JSON.stringify({

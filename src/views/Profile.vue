@@ -14,13 +14,12 @@
 export default {
 	data: () => {
 		return {
-			server_adress: "127.0.0.1:1080",
 			profile: false
 		};
 	},
 	methods: {
 		getProfile() {
-			fetch(`http://${this.server_adress}/profile/`, {
+			fetch(`${this.http_prefix}${this.server_adress}/profile/`, {
 					method: "get",
 					headers: {
 						"Authorization": "Bearer " + window.localStorage.getItem("jwt")

@@ -52,7 +52,7 @@ export default {
 	},
 	methods: {
 		getOauthUrls() {
-			fetch(`http://${this.server_adress}/oauth/`, {
+			fetch(`${this.http_prefix}${this.server_adress}/oauth/`, {
 					method: "get",
 				})
 				.then((res) => {
@@ -64,7 +64,7 @@ export default {
 				.catch((err) => console.log(err));
 		},
 		login(code) {
-			fetch(`http://${this.server_adress}/oauth/`, {
+			fetch(`${this.http_prefix}${this.server_adress}/oauth/`, {
 					method: "post",
 					body: JSON.stringify({
 						"code": code
@@ -80,7 +80,7 @@ export default {
 				.catch((err) => console.log(err))
 		},
 		logoff() {
-			fetch(`http://${this.server_adress}/oauth/`, {
+			fetch(`${this.http_prefix}${this.server_adress}/oauth/`, {
 					method: "delete",
 					headers: {
 						"Authorization": "Bearer " + window.localStorage.getItem("jwt")
@@ -97,7 +97,7 @@ export default {
 				.catch((err) => console.log(err))
 		},
 		getProfile() {
-			fetch(`http://${this.server_adress}/profile/`, {
+			fetch(`${this.http_prefix}${this.server_adress}/profile/`, {
 					method: "get",
 					headers: {
 						"Authorization": "Bearer " + window.localStorage.getItem("jwt")
