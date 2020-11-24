@@ -9,6 +9,16 @@ Vue.use(BootstrapVue)
 
 Vue.config.productionTip = false
 
+Vue.mixin({
+  data: function() {
+    return {
+      get server_adress() {
+        return "127.0.0.1:1080";
+      }
+    }
+  }
+})
+
 new Vue({
   router,
   render: h => h(App),

@@ -11,8 +11,7 @@
 					<router-link to="/" class="nav-link">Home</router-link>
 				</li>
 				<li class="nav-item">
-					<!-- <router-link to="/profile" class="nav-link">Profile</router-link> -->
-					<a class="nav-link">Profile</a>
+					<router-link to="/profile" class="nav-link">Profile</router-link>
 				</li>
 				<li class="nav-item">
 					<router-link to="/game" class="nav-link">Game</router-link>
@@ -21,9 +20,10 @@
 		</div>
 		<span class="navbar-text">
 			<div v-if="profile">
-				Welcome {{profile.name}} <img v-bind:src="profile.avatar_url" height="30px" padding="0" margin="0" />
+				Welcome : {{profile.name}} ! <img v-bind:src="profile.avatar_url" height="30px" padding="0" margin="0" />
+				<button v-on:click="logoff">Log off</button>
 			</div>
-			<div v-else><a v-bind:href="urls.github">Connect with Github</a></div>
+			<div v-else><a v-bind:href="urls.github">Login with Github</a></div>
 		</span>
 	</nav>
 	<router-view />
@@ -37,74 +37,97 @@
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
 	color: #2c3e50;
-}
-
-#nav {
-	padding: 30px;
-}
-
-#nav a {
-	font-weight: bold;
-	color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-	color: #42b983;
+	height: 100%;
 }
 </style>
 
 <script>
 export default {
-	name: 'Auth',
+	name: "Auth",
 	data: () => {
 		return {
 			urls: {},
-			server_adress: "127.0.0.1:1080",
 			profile: false
 		};
 	},
 	methods: {
-		connect() {
-			fetch(`http://${this.server_adress}/auth/`, {
+		getOauthUrls() {
+			fetch(`http://${this.server_adress}/oauth/`, {
 					method: "get",
-					credentials: "include"
 				})
 				.then((res) => {
-					return res.json();
+					return res.json()
 				})
 				.then((data) => {
-					this.urls = data.urls;
-					this.profile = data.profile;
-					console.log(data);
+					this.urls = data.urls
 				})
 				.catch((err) => console.log(err));
 		},
 		login(code) {
-			fetch(`http://${this.server_adress}/auth/`, {
+			fetch(`http://${this.server_adress}/oauth/`, {
 					method: "post",
 					body: JSON.stringify({
 						"code": code
 					}),
-					credentials: "include"
 				})
 				.then((res) => {
-					return res.json();
+					return res.json()
 				})
 				.then((data) => {
-					this.urls = data.urls;
-					this.profile = data.profile;
-					console.log(data);
+					window.localStorage.setItem("jwt", data.jwt)
+					window.location.replace("/")
 				})
-				.catch((err) => console.log(err));
+				.catch((err) => console.log(err))
 		},
+		logoff() {
+			fetch(`http://${this.server_adress}/oauth/`, {
+					method: "delete",
+					headers: {
+						"Authorization": "Bearer " + window.localStorage.getItem("jwt")
+					}
+				})
+				.then((res) => {
+					return res.json()
+				})
+				.then(() => {
+					window.localStorage.removeItem("jwt")
+					window.location.replace("/")
+					this.profile = false
+				})
+				.catch((err) => console.log(err))
+		},
+		getProfile() {
+			fetch(`http://${this.server_adress}/profile/`, {
+					method: "get",
+					headers: {
+						"Authorization": "Bearer " + window.localStorage.getItem("jwt")
+					},
+				})
+				.then((res) => {
+					return res.json()
+				})
+				.then((data) => {
+					this.profile = data.profile
+				})
+				.catch((err) => console.log(err))
+		}
 	},
 	mounted() {
-		let url = new URL(window.location.href);
-		let code = url.searchParams.get("code");
+		// Check if the user come back from OAuth Authentication
+		let url = new URL(window.location.href)
+		let code = url.searchParams.get("code")
 		if (code != undefined)
-			this.login(code);
-		else
-			this.connect()
+			this.login(code)
+
+		// Get the url for the
+		this.getOauthUrls()
+
+		// try to get the profile if the jwt is set
+		let jwt = window.localStorage.getItem("jwt")
+		if (jwt != "undefined") {
+			this.getProfile()
+		}
+
 	}
 }
 </script>
