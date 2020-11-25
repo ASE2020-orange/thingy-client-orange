@@ -90,7 +90,7 @@
             </b-list-group>
           </b-col>
           <b-col sm="4">
-            <base-timer timeLimit="10" ref="questionTimer"></base-timer>
+            <base-timer @timerUp="handleTimerUp" timeLimit="10" ref="questionTimer"></base-timer>
           </b-col>
         </b-row>
       </b-container>
@@ -324,6 +324,11 @@ export default {
           }
         }
       };
+    },
+    handleTimerUp()
+    {
+      this.showToaster("danger", "Time over", "You were too slow to answer !");
+      this.getQuestion();
     },
     finishGame() {
       this.game_id = -1;

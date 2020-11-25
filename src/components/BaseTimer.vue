@@ -92,8 +92,8 @@ export default {
   },
 
   watch: {
-    timeLeft(newValue) {
-      if (newValue === 0) {
+    timeLeft(newValue, timePassed) {
+      if (newValue === 0 && timePassed > 0) {
         this.onTimesUp();
       }
     }
@@ -106,6 +106,7 @@ export default {
   methods: {
     onTimesUp() {
       clearInterval(this.timerInterval);
+      this.$emit("timerUp");
     },
 
     startTimer() {
@@ -114,7 +115,7 @@ export default {
 
     reset() {
       this.timePassed = 0;
-      this.onTimesUp();
+      clearInterval(this.timerInterval);
       this.startTimer();
     },
   }
