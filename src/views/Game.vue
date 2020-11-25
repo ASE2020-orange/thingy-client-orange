@@ -215,6 +215,7 @@ export default {
         .catch((err) => console.log(err));
     },
     getQuestion() {
+      this.resetFalseAnswersOnGUI();
       this.showToaster("info", "Next question", "Getting next question");
       fetch(
         `${this.http_prefix}${this.server_adress}/api/games/${this.game_id}/question/`,
@@ -297,7 +298,6 @@ export default {
               this.finishGame();
               break;
             case "NEXT_QUESTION":
-              this.resetFalseAnswersOnGUI();
               this.getQuestion();
               break;
             case "GAME_STARTED":
