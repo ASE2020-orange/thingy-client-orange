@@ -67,8 +67,7 @@
             <button
               type="button"
               class="btn btn-primary"
-              v-on:click="startGame()"
-            >
+              v-on:click="startGame()">
               Start game
             </button>
           </b-col>
@@ -77,7 +76,7 @@
 
       <b-container fluid v-if="!showSettings">
         <b-row class="vh-100 text-center" align-v="center">
-          <b-col>
+          <b-col sm="8">
             <category v-bind:category="category"></category>
             <question v-bind:question="question"></question>
             <b-list-group horizontal class="justify-content-center">
@@ -88,6 +87,9 @@
                 v-for="(answer, index) in answers"
               ></answer>
             </b-list-group>
+          </b-col>
+          <b-col sm="4">
+            <base-timer timeLimit="10" ref="questionTimer"></base-timer>
           </b-col>
         </b-row>
       </b-container>
@@ -100,6 +102,7 @@ import Category from "@/components/Category.vue";
 import Question from "@/components/Question.vue";
 import Answer from "@/components/Answer.vue";
 import ThingySync from "@/components/ThingySync.vue";
+import BaseTimer from "@/components/BaseTimer.vue";
 
 export default {
   name: "Game",
@@ -108,17 +111,25 @@ export default {
     Question,
     Answer,
     ThingySync,
+    BaseTimer,
   },
   data: () => {
     return {
       ws_server: undefined,
-      showSettings: true,
+      //showSettings: true,
 
       categories: [],
       selectedCategory: {},
 
+
       difficulties: ["Easy", "Medium", "Hard"],
       selectedDifficulty: { difficulty: "Easy" },
+
+      // debug
+      thingy_id: 1,
+      showSettings: false,
+
+
 
       positions: [
         require("@/assets/normal.svg"),
@@ -133,8 +144,10 @@ export default {
       game_id: -1,
       selected_answer: -1,
       false_answers: new Array(),
-      thingy_id: -1,
+      //thingy_id: -1,
       thingys: new Array(),
+
+      //timer: new BaseTimer(),
     };
   },
   methods: {
@@ -181,7 +194,7 @@ export default {
           return res.json();
         })
         .catch((err) => console.log(err))
-        .then((data) => {
+        .then((data) => { 
           this.categories = data.trivia_categories;
           this.selectedCategory = this.categories[0];
         })
@@ -232,6 +245,7 @@ export default {
           });
           this.question = this.decodeHTML(data.question);
           this.category = data.category;
+          this.$refs.questionTimer.reset();
         })
         .catch((err) => console.log(err));
     },
