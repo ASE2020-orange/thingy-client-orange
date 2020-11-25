@@ -113,7 +113,6 @@ export default {
     },
 
     reset() {
-      console.log("Timer reset")
       this.timePassed = 0;
       this.onTimesUp();
       this.startTimer();

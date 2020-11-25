@@ -116,7 +116,7 @@ export default {
   data: () => {
     return {
       ws_server: undefined,
-      //showSettings: true,
+      showSettings: true,
 
       categories: [],
       selectedCategory: {},
@@ -124,12 +124,6 @@ export default {
 
       difficulties: ["Easy", "Medium", "Hard"],
       selectedDifficulty: { difficulty: "Easy" },
-
-      // debug
-      thingy_id: 1,
-      showSettings: false,
-
-
 
       positions: [
         require("@/assets/normal.svg"),
@@ -144,10 +138,8 @@ export default {
       game_id: -1,
       selected_answer: -1,
       false_answers: new Array(),
-      //thingy_id: -1,
+      thingy_id: -1,
       thingys: new Array(),
-
-      //timer: new BaseTimer(),
     };
   },
   methods: {
