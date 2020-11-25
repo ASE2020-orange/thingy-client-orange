@@ -2,8 +2,8 @@
 module.exports = {
     devServer: {
         host: '0.0.0.0',
-        port: '8080',
-        public: '127.0.0.1',
+        port: process.env.VUE_APP_CLIENT_PORT,
+        public: process.env.VUE_APP_CLIENT_ADDRESS,
         disableHostCheck: true
     },
 }
