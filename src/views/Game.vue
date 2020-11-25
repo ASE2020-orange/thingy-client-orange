@@ -67,7 +67,8 @@
             <button
               type="button"
               class="btn btn-primary"
-              v-on:click="startGame()">
+              v-on:click="startGame()"
+            >
               Start game
             </button>
           </b-col>
@@ -121,7 +122,6 @@ export default {
       categories: [],
       selectedCategory: {},
 
-
       difficulties: ["Easy", "Medium", "Hard"],
       selectedDifficulty: { difficulty: "Easy" },
 
@@ -155,7 +155,10 @@ export default {
         }),
       };
 
-      fetch(`${this.http_prefix}${this.server_adress}/api/games/`, requestOptions)
+      fetch(
+        `${this.http_prefix}${this.server_adress}/api/games/`,
+        requestOptions
+      )
         .then((res) => {
           return res.json();
         })
@@ -186,7 +189,7 @@ export default {
           return res.json();
         })
         .catch((err) => console.log(err))
-        .then((data) => { 
+        .then((data) => {
           this.categories = data.trivia_categories;
           this.selectedCategory = this.categories[0];
         })
@@ -195,7 +198,8 @@ export default {
     checkExistingGame() {
       fetch(`${this.http_prefix}${this.server_adress}/api/games/`, {
         method: "get",
-      }).then((res) => {
+      })
+        .then((res) => {
           return res.json();
         })
         .catch((err) => console.log(err))
@@ -211,13 +215,7 @@ export default {
         .catch((err) => console.log(err));
     },
     getQuestion() {
-
-      this.$bvToast.toast("Getting next question", {
-        title: "Next question",
-        variant: "info",
-        toaster: "b-toaster-top-center",
-        noCloseButton: true,
-      });
+      this.showToaster("info", "Next question", "Getting next question");
       fetch(
         `${this.http_prefix}${this.server_adress}/api/games/${this.game_id}/question/`,
         {
@@ -241,8 +239,8 @@ export default {
         })
         .catch((err) => console.log(err));
     },
-    showToaster(variant, title, answer_id) {
-      this.$bvToast.toast(`${this.answers[answer_id].answer}`, {
+    showToaster(variant, title, content) {
+      this.$bvToast.toast(content, {
         title: title,
         variant: variant,
         toaster: "b-toaster-top-center",
@@ -251,7 +249,9 @@ export default {
     },
     connectWS() {
       console.log("Starting connection to WebSocket Server");
-      this.ws_server = new WebSocket(`${this.ws_prefix}${this.server_adress}/ws`);
+      this.ws_server = new WebSocket(
+        `${this.ws_prefix}${this.server_adress}/ws`
+      );
 
       this.ws_server.onopen = () => {
         this.ws_server.send("CLIENT_CONNECT");
@@ -297,20 +297,17 @@ export default {
               this.finishGame();
               break;
             case "NEXT_QUESTION":
+              this.resetFalseAnswersOnGUI();
               this.getQuestion();
               break;
             case "GAME_STARTED":
               if (this.thingy_id != -1) {
                 this.checkExistingGame();
               } else {
-                this.$bvToast.toast(
-                  "A game has been started, hurry up to choose your Thingy!",
-                  {
-                    title: "Game started",
-                    variant: "info",
-                    toaster: "b-toaster-top-center",
-                    noCloseButton: true,
-                  }
+                this.showToaster(
+                  "info",
+                  "Game started",
+                  "A game has been started, hurry up to choose your Thingy!"
                 );
               }
               break;
@@ -331,17 +328,19 @@ export default {
     finishGame() {
       this.game_id = -1;
       this.showSettings = true;
-      this.$bvToast.toast("Game finished", {
-        title: "Game finished",
-        variant: "info",
-        toaster: "b-toaster-top-center",
-        noCloseButton: true,
-      });
+      this.showToaster(
+        "info",
+        "Game finished",
+        "All the questions were answered"
+      );
     },
     decodeHTML(html) {
       var txt = document.createElement("textarea");
       txt.innerHTML = html;
       return txt.value;
+    },
+    resetFalseAnswersOnGUI() {
+      this.false_answers.splice(0, this.false_answers.length);
     },
     answerQuestion(answer_id) {
       fetch(
@@ -359,10 +358,17 @@ export default {
         .catch((err) => console.log(err))
         .then((data) => {
           if (data.correct) {
-            this.showToaster("success", "Correct answer", answer_id);
-            this.false_answers.splice(0, this.false_answers.length);
+            this.showToaster(
+              "success",
+              "Correct answer",
+              this.answers[answer_id].answer
+            );
           } else {
-            this.showToaster("danger", "Wrong answer", answer_id);
+            this.showToaster(
+              "danger",
+              "Wrong answer",
+              this.answers[answer_id].answer
+            );
             this.false_answers.push(answer_id);
           }
         })
