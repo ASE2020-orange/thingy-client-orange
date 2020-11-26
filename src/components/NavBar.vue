@@ -15,10 +15,19 @@
 	</ul>
 	<div class="navbar-text">
 		<div v-if="profile">
-			Welcome : {{profile.name}} ! <img v-bind:src="profile.avatar_url" height="30px" padding="0" margin="0" />
-			<button v-on:click="logoff">Log off</button>
+			<span class="p-2">
+				Welcome {{profile.name}} !
+			</span>
+			<img class="rounded-circle" v-bind:src="profile.avatar_url" height="38px" padding="0" margin="0" />
+			<button type="button" class="ml-2 btn btn-primary" v-on:click="logoff">
+				Logoff
+			</button>
 		</div>
-		<div v-else><a v-bind:href="urls.github">Login with Github</a></div>
+		<div v-else>
+			<button type="button" class="btn btn-primary" v-on:click="logoff">
+				<a v-bind:href="urls.github">Login with Github</a>
+			</button>
+		</div>
 	</div>
 </nav>
 </template>
