@@ -21,7 +21,7 @@ export default {
 	},
 	methods: {
 		getProfile() {
-			fetch(`${this.http_prefix}${this.server_adress}/profile/`, {
+			fetch(`${this.http_prefix}${this.server_address}/profile/`, {
 					method: "get",
 					headers: {
 						"Authorization": "Bearer " + window.localStorage.getItem("jwt")

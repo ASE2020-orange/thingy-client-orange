@@ -156,7 +156,7 @@ export default {
       };
 
       fetch(
-        `${this.http_prefix}${this.server_adress}/api/games/`,
+        `${this.http_prefix}${this.server_address}/api/games/`,
         requestOptions
       )
         .then((res) => {
@@ -182,7 +182,7 @@ export default {
     },
 
     getCategories() {
-      fetch(`${this.http_prefix}${this.server_adress}/api/categories/`, {
+      fetch(`${this.http_prefix}${this.server_address}/api/categories/`, {
         method: "get",
       })
         .then((res) => {
@@ -196,7 +196,7 @@ export default {
         .catch((err) => console.log(err));
     },
     checkExistingGame() {
-      fetch(`${this.http_prefix}${this.server_adress}/api/games/`, {
+      fetch(`${this.http_prefix}${this.server_address}/api/games/`, {
         method: "get",
       })
         .then((res) => {
@@ -218,7 +218,7 @@ export default {
       this.resetFalseAnswersOnGUI();
       this.showToaster("info", "Next question", "Getting next question");
       fetch(
-        `${this.http_prefix}${this.server_adress}/api/games/${this.game_id}/question/`,
+        `${this.http_prefix}${this.server_address}/api/games/${this.game_id}/question/`,
         {
           method: "get",
         }
@@ -251,7 +251,7 @@ export default {
     connectWS() {
       console.log("Starting connection to WebSocket Server");
       this.ws_server = new WebSocket(
-        `${this.ws_prefix}${this.server_adress}/ws`
+        `${this.ws_prefix}${this.server_address}/ws`
       );
 
       this.ws_server.onopen = () => {
@@ -349,7 +349,7 @@ export default {
     },
     answerQuestion(answer_id) {
       fetch(
-        `${this.http_prefix}${this.server_adress}/api/games/${this.game_id}/question/`,
+        `${this.http_prefix}${this.server_address}/api/games/${this.game_id}/question/`,
         {
           method: "post",
           body: JSON.stringify({

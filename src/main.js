@@ -12,7 +12,7 @@ Vue.config.productionTip = false
 Vue.mixin({
   data: function() {
     return {
-      get server_adress() {
+      get server_address() {
         return process.env.VUE_APP_SERVER_ADDRESS;
       },
       get http_prefix(){
