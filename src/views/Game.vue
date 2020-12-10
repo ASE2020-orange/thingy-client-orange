@@ -354,6 +354,7 @@ export default {
           method: "post",
           body: JSON.stringify({
             answer_id: answer_id,
+            thingy_id: this.thingy_id
           }),
         }
       )
