@@ -235,7 +235,7 @@ export default {
             x.answer = this.decodeHTML(x.answer);
           });
           this.question = this.decodeHTML(data.question);
-          this.category = data.category;
+          this.category = this.categories.filter(cat=>cat.id==data.category)[0].name;
           this.$refs.questionTimer.reset();
         })
         .catch((err) => console.log(err));
@@ -353,9 +353,12 @@ export default {
         {
           method: "post",
           body: JSON.stringify({
-            answer_id: answer_id,
+            answer_id: this.answers[answer_id].answer_id,
             thingy_id: this.thingy_id
           }),
+          headers: {
+						"Authorization": "Bearer " + window.localStorage.getItem("jwt")
+					},
         }
       )
         .then((res) => {
