@@ -42,7 +42,7 @@ export default {
 	},
 	methods: {
 		getOauthUrls() {
-			fetch(`${this.http_prefix}${this.server_address}/oauth/`, {
+			fetch(`${this.http_prefix}${this.server_address}/api/oauth/`, {
 					method: "get",
 				})
 				.then((res) => {
@@ -54,7 +54,7 @@ export default {
 				.catch((err) => console.log(err));
 		},
 		login(code) {
-			fetch(`${this.http_prefix}${this.server_address}/oauth/`, {
+			fetch(`${this.http_prefix}${this.server_address}/api/oauth/`, {
 					method: "post",
 					body: JSON.stringify({
 						"code": code
@@ -70,7 +70,7 @@ export default {
 				.catch((err) => console.log(err))
 		},
 		logoff() {
-			fetch(`${this.http_prefix}${this.server_address}/oauth/`, {
+			fetch(`${this.http_prefix}${this.server_address}/api/oauth/`, {
 					method: "delete",
 					headers: {
 						"Authorization": "Bearer " + window.localStorage.getItem("jwt")
@@ -87,7 +87,7 @@ export default {
 				.catch((err) => console.log(err))
 		},
 		getProfile() {
-			fetch(`${this.http_prefix}${this.server_address}/profile/`, {
+			fetch(`${this.http_prefix}${this.server_address}/api/profile/`, {
 					method: "get",
 					headers: {
 						"Authorization": "Bearer " + window.localStorage.getItem("jwt")
