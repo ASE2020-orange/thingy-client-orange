@@ -4,26 +4,62 @@
 		<div v-if="profile">
 			<h1>{{profile.name}}</h1>
 			<img v-bind:src="profile.avatar_url" />
-			<h3>Location : {{profile.location}}</h3>
-			<h3>Bio : {{profile.bio}}</h3>
+			<p class="h3">Location :: {{profile.location}}</p>
+			<p class="h3">Bio : {{profile.bio}}</p>
 		</div>
 		<div v-else>You are not connected</div>
 	</section>
 	<section class="container text-center pt-4">
 		<div v-if="profile">
 			<h1> Dashboard </h1>
-			<h3> Number of quizzes done  </h3>
-			<div> {{ nb_quizzes }} </div>
-			<h3> Number of questions answered </h3>
-			<div> {{ nb_answers }} </div>
-			<h3> Number of correct answers </h3>
-			<div> {{ nb_correct_answers }} </div>
-			<h3> Number of wrong answers </h3>
-			<div> {{ nb_wrong_answers }} </div>
-			<h3> Percent of correct answers </h3>
-			<div> {{ percent_of_correct_answer }}% </div>
-			<h3> Average reaction time </h3>
-			<div> {{ avg_reaction_time }} seconds </div>
+			<div class="card justify-content-center">
+				<div class="card-header">
+					Number of quizzes done	
+  				</div>
+				<div class="card-body">
+					{{ nb_quizzes }}
+				</div>
+			</div>
+			<div class="card justify-content-center">
+				<div class="card-header">
+					Number of questions answered
+				</div>
+				 <div class="card-body">
+					{{ nb_answers }}
+				 </div>
+			</div>
+			<div class="card justify-content-center">
+				<div class="card-header">
+					Number of correct answers
+				</div>
+				<div class="card-body">
+					{{ nb_correct_answers }} 
+				</div>
+			 </div>
+			<div class="card justify-content-center">
+				<div class="card-header">
+					Number of wrong answers
+				</div>
+				<div class="card-body">
+					{{ nb_wrong_answers }}
+				</div>
+			</div>
+			<div class="card justify-content-center">
+				<div class="card-header">
+					Percent of correct answers
+				</div>
+				<div class="card-body">
+					{{ percent_of_correct_answer }}%
+				</div>
+			</div>
+			<div class="card justify-content-center">
+				<div class="card-header">
+					Average reaction time
+				</div>
+				<div class="card-body">
+					{{ avg_reaction_time|round }} seconds
+				</div>
+			</div>
 		</div>
 	</section>
 </main>
@@ -39,7 +75,7 @@ export default {
 			nb_correct_answers: 0,
 			nb_wrong_answers: 0,
 			percent_of_correct_answer: 0,
-			avg_reaction_time: 0
+			avg_reaction_time: Math.round(1.2123123 * 10) / 10,
 		};
 	},
 	methods: {
@@ -74,6 +110,7 @@ export default {
                 this.nb_wrong_answers = data["nb_wrong_answers"];
 				this.percent_of_correct_answer = data["percent_of_correct_answer"];
 				this.avg_reaction_time = data["avg_reaction_time"];
+				this.avg_reaction_time = Math.round(this.avg_reaction_time * 10) / 10;
             })
             .catch((err) => console.log(err));
 		}
