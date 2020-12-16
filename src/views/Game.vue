@@ -148,7 +148,7 @@ export default {
 
       const requestOptions = {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" ,"Authorization": "Bearer " + window.localStorage.getItem("jwt")},
         body: JSON.stringify({
           category: this.selectedCategory.id,
           difficulty: this.selectedDifficulty.difficulty.toLowerCase(),
@@ -249,81 +249,87 @@ export default {
       });
     },
     connectWS() {
-      console.log("Starting connection to WebSocket Server");
-      this.ws_server = new WebSocket(
-        `${this.ws_prefix}${this.server_address}/ws`
-      );
+      if(this.ws_server===undefined){
+        if (window.localStorage.getItem("uuidv4") === null) {
+          window.localStorage.setItem("uuidv4",this.uuidv4())
+        }
 
-      this.ws_server.onopen = () => {
-        this.ws_server.send("CLIENT_CONNECT");
-        console.log("Successfully connected to the websocket server...");
-      };
+        console.log("Starting connection to WebSocket Server");
+        this.ws_server = new WebSocket(
+          `${this.ws_prefix}${this.server_address}/ws`
+        );
 
-      this.ws_server.onmessage = (event) => {
-        if (event.data.startsWith("TO_CLIENT")) {
-          let action = event.data.split(".")[1];
-          let thingy = event.data.split(".")[2];
-          let thingy_id = -1;
-          if (thingy != null) {
-            thingy_id = thingy.split("-")[1];
-          }
+        this.ws_server.onopen = () => {
+          this.ws_server.send(`CLIENT_CONNECT.${window.localStorage.getItem("uuidv4")}`);
+          console.log("Successfully connected to the websocket server...");
+        };
 
-          switch (action) {
-            case "FLIP_A":
-              if (this.thingy_id == thingy_id || this.thingy_id == -1) {
-                this.selected_answer = 0;
-              }
-              break;
-            case "FLIP_B":
-              if (this.thingy_id == thingy_id || this.thingy_id == -1) {
-                this.selected_answer = 1;
-              }
+        this.ws_server.onmessage = (event) => {
+          if (event.data.startsWith("TO_CLIENT")) {
+            let action = event.data.split(".")[1];
+            let thingy = event.data.split(".")[2];
+            let thingy_id = -1;
+            if (thingy != null) {
+              thingy_id = thingy.split("-")[1];
+            }
 
-              break;
-            case "FLIP_C":
-              if (this.thingy_id == thingy_id || this.thingy_id == -1) {
-                this.selected_answer = 2;
-              }
-              break;
-            case "BUTTON":
-              if (
-                this.thingy_id == thingy_id &&
-                this.selected_answer != -1 &&
-                this.game_id != -1
-              ) {
-                this.answerQuestion(this.selected_answer);
-              }
-              break;
-            case "GAME_FINISHED":
-              this.finishGame();
-              break;
-            case "NEXT_QUESTION":
-              this.getQuestion();
-              break;
-            case "GAME_STARTED":
-              if (this.thingy_id != -1) {
-                this.checkExistingGame();
-              } else {
-                this.showToaster(
-                  "info",
-                  "Game started",
-                  "A game has been started, hurry up to choose your Thingy!"
+            switch (action) {
+              case "FLIP_A":
+                if (this.thingy_id == thingy_id || this.thingy_id == -1) {
+                  this.selected_answer = 0;
+                }
+                break;
+              case "FLIP_B":
+                if (this.thingy_id == thingy_id || this.thingy_id == -1) {
+                  this.selected_answer = 1;
+                }
+
+                break;
+              case "FLIP_C":
+                if (this.thingy_id == thingy_id || this.thingy_id == -1) {
+                  this.selected_answer = 2;
+                }
+                break;
+              case "BUTTON":
+                if (
+                  this.thingy_id == thingy_id &&
+                  this.selected_answer != -1 &&
+                  this.game_id != -1
+                ) {
+                  this.answerQuestion(this.selected_answer);
+                }
+                break;
+              case "GAME_FINISHED":
+                this.finishGame();
+                break;
+              case "NEXT_QUESTION":
+                this.getQuestion();
+                break;
+              case "GAME_STARTED":
+                if (this.thingy_id != -1) {
+                  this.checkExistingGame();
+                } else {
+                  this.showToaster(
+                    "info",
+                    "Game started",
+                    "A game has been started, hurry up to choose your Thingy!"
+                  );
+                }
+                break;
+            }
+
+            if (this.thingy_id == -1) {
+              for (let i = 0; i < 3; i++) {
+                this.$set(
+                  this.thingys[thingy_id - 1].positions_selected,
+                  i,
+                  i == this.selected_answer ? true : false
                 );
               }
-              break;
-          }
-
-          if (this.thingy_id == -1) {
-            for (let i = 0; i < 3; i++) {
-              this.$set(
-                this.thingys[thingy_id - 1].positions_selected,
-                i,
-                i == this.selected_answer ? true : false
-              );
             }
           }
-        }
-      };
+        };
+      }
     },
     handleTimerUp()
     {
@@ -392,6 +398,11 @@ export default {
       this.thingy_id = thingy_id;
       this.checkExistingGame();
     },
+    uuidv4() {
+      return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      );
+    }
   },
   mounted() {
     this.getCategories();

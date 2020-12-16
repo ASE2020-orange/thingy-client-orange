@@ -97,7 +97,10 @@ export default {
 		},
 		getUserStats() {
             fetch(`${this.http_prefix}${this.server_address}/api/user/${this.profile.id}/stats/`, {
-                method: "get",
+				method: "get",
+				headers: {
+						"Authorization": "Bearer " + window.localStorage.getItem("jwt")
+					},
             })
             .then((res) => {
                 return res.json();
