@@ -1,6 +1,6 @@
 <template>
   <div class="Category">
-    <h1>Category: {{ category }}</h1>
+    <h1 v-if="!!category">Category: {{ category }}</h1>
   </div>
 </template>
 

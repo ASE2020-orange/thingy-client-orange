@@ -12,8 +12,14 @@ Vue.config.productionTip = false
 Vue.mixin({
   data: function() {
     return {
-      get server_adress() {
-        return "127.0.0.1:1080";
+      get server_address() {
+        return process.env.VUE_APP_SERVER_ADDRESS;
+      },
+      get http_prefix(){
+        return "http://";
+      },
+      get ws_prefix(){
+        return "ws://";
       }
     }
   }
