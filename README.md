@@ -1,10 +1,16 @@
-# container installation
+## Installation
+
+First, make a copy the `.env.sample` and name it `.env` at the root of the thingy-client-orange folder.
+Then fill up the needed parameters.   
+
+### Docker installation
+
 - `docker build -t thingy-client-orange .`
 - then `docker-compose up` in the thingy-api-orange root folder
 
-# local installation
+### local installation
 
-## Project setup
+### Project setup
 ```
 npm install
 ```
