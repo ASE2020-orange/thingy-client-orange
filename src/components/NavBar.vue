@@ -19,6 +19,7 @@
 				Welcome {{profile.name}} !
 			</span>
 			<img class="rounded-circle" v-bind:src="profile.avatar_url" height="38px" padding="0" margin="0" />
+			Score: {{score}}
 			<button type="button" class="ml-2 btn btn-primary" v-on:click="logoff">
 				Logoff
 			</button>
@@ -37,7 +38,8 @@ export default {
 	data: () => {
 		return {
 			urls: {},
-			profile: false
+			profile: false,
+			score:0,
 		};
 	},
 	methods: {
@@ -65,6 +67,7 @@ export default {
 				})
 				.then((data) => {
 					window.localStorage.setItem("jwt", data.jwt)
+					window.localStorage.setItem("score", data.score)
 					window.location.replace("/")
 				})
 				.catch((err) => console.log(err))
@@ -103,6 +106,9 @@ export default {
 		}
 	},
 	mounted() {
+		window.addEventListener('score-changed', () => {
+			this.score = window.localStorage.getItem("score");
+		});
 		// Check if the user come back from OAuth Authentication
 		let url = new URL(window.location.href)
 		let code = url.searchParams.get("code")
@@ -116,6 +122,11 @@ export default {
 		let jwt = window.localStorage.getItem("jwt")
 		if (jwt != "undefined") {
 			this.getProfile()
+		}
+
+		let score = window.localStorage.getItem("score")
+		if(score!="undefined"){
+			this.score=score;
 		}
 
 	}

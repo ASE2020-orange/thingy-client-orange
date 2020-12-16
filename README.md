@@ -1,3 +1,6 @@
+# .env file
+do not forget to set the `.env` file based on `.env.sample`
+
 # container installation
 - `docker build -t thingy-client-orange .`
 - then `docker-compose up` in the thingy-api-orange root folder
