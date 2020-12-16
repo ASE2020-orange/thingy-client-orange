@@ -331,6 +331,9 @@ export default {
       this.getQuestion();
     },
     finishGame() {
+      this.question="";
+      this.answers=[];
+      this.category="";
       this.game_id = -1;
       this.showSettings = true;
       this.showToaster(
@@ -366,6 +369,8 @@ export default {
         })
         .catch((err) => console.log(err))
         .then((data) => {
+          window.localStorage.setItem("score", data.score);
+          window.dispatchEvent(new CustomEvent('score-changed'));
           if (data.correct) {
             this.showToaster(
               "success",

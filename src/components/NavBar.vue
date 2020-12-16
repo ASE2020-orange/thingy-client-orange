@@ -19,6 +19,7 @@
 				Welcome {{profile.name}} !
 			</span>
 			<img class="rounded-circle" v-bind:src="profile.avatar_url" height="38px" padding="0" margin="0" />
+			Score: {{score}}
 			<button type="button" class="ml-2 btn btn-primary" v-on:click="logoff">
 				Logoff
 			</button>
@@ -37,12 +38,13 @@ export default {
 	data: () => {
 		return {
 			urls: {},
-			profile: false
+			profile: false,
+			score:0,
 		};
 	},
 	methods: {
 		getOauthUrls() {
-			fetch(`${this.http_prefix}${this.server_address}/oauth/`, {
+			fetch(`${this.http_prefix}${this.server_address}/api/oauth/`, {
 					method: "get",
 				})
 				.then((res) => {
@@ -54,7 +56,7 @@ export default {
 				.catch((err) => console.log(err));
 		},
 		login(code) {
-			fetch(`${this.http_prefix}${this.server_address}/oauth/`, {
+			fetch(`${this.http_prefix}${this.server_address}/api/oauth/`, {
 					method: "post",
 					body: JSON.stringify({
 						"code": code
@@ -65,12 +67,13 @@ export default {
 				})
 				.then((data) => {
 					window.localStorage.setItem("jwt", data.jwt)
+					window.localStorage.setItem("score", data.score)
 					window.location.replace("/")
 				})
 				.catch((err) => console.log(err))
 		},
 		logoff() {
-			fetch(`${this.http_prefix}${this.server_address}/oauth/`, {
+			fetch(`${this.http_prefix}${this.server_address}/api/oauth/`, {
 					method: "delete",
 					headers: {
 						"Authorization": "Bearer " + window.localStorage.getItem("jwt")
@@ -87,7 +90,7 @@ export default {
 				.catch((err) => console.log(err))
 		},
 		getProfile() {
-			fetch(`${this.http_prefix}${this.server_address}/profile/`, {
+			fetch(`${this.http_prefix}${this.server_address}/api/profile/`, {
 					method: "get",
 					headers: {
 						"Authorization": "Bearer " + window.localStorage.getItem("jwt")
@@ -103,6 +106,9 @@ export default {
 		}
 	},
 	mounted() {
+		window.addEventListener('score-changed', () => {
+			this.score = window.localStorage.getItem("score");
+		});
 		// Check if the user come back from OAuth Authentication
 		let url = new URL(window.location.href)
 		let code = url.searchParams.get("code")
@@ -116,6 +122,11 @@ export default {
 		let jwt = window.localStorage.getItem("jwt")
 		if (jwt != "undefined") {
 			this.getProfile()
+		}
+
+		let score = window.localStorage.getItem("score")
+		if(score!="undefined"){
+			this.score=score;
 		}
 
 	}
